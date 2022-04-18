@@ -1,11 +1,12 @@
 export const types = {
 
-    adminCheck: '[admin] Admin Checker',
+    uiAdminPanel: '[ui] Toogle admin panel',
+    uiCartPanel: '[ui] Toogle cart panel',
 
     cartAddNewProduct: '[cart] Add new product',
     cartRemoveProduct: '[cart] Remove product',
+    cartUpdateProduct: '[cart] Update product',
     cartRemoveAll: '[cart] Remove all products',
-    cartAddNew: '[cart] Add new product',
 
     productsLoad: '[products] Load products',
     productsAddNew: '[products] Add new product',

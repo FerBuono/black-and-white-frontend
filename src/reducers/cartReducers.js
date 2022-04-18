@@ -1,17 +1,18 @@
 import { types } from "../types/types";
 
 const initialState = {
-    isAdmin: true,
-};
+    products: [],
+}
 
-export const adminReducer = (state = initialState, action) => {
+export const cartReducers = (state = initialState, action) => {
 
     switch (action.type) {
-        case types.adminCheck:
+        case types.cartAddNewProduct:
             return {
                 ...state,
-                isAdmin: !state.isAdmin
+                products: [...state.products, action.payload],
             };
+
         default:
             return state;
     };
