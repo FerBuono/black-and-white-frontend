@@ -3,7 +3,11 @@ import { types } from "../types/types";
 const initialState = {
     loading: true,
     products: [],
-}
+    active: {
+        update: {},
+        remove: {}
+    }
+};
 
 export const productsReducers = (state = initialState, action) => {
 
@@ -27,6 +31,21 @@ export const productsReducers = (state = initialState, action) => {
             return {
                 ...state,
                 products: [...action.payload]
+            };
+        case types.productsSetActive:   
+            return {
+                ...state,
+                active: {
+                    [action.payload.actionToDo]: action.payload.product 
+                }
+            };
+        case types.productsUnsetActive:
+            return {
+                ...state,
+                active: {
+                    update: {},
+                    remove: {}
+                }
             };
         
         default:

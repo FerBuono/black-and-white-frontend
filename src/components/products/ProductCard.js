@@ -1,5 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { cartStartAddNewProduct } from '../../actions/cart';
+import { productsSetActive } from '../../actions/products';
+import { toogleAdminPanel } from '../../actions/ui';
 
 const Card = styled.div`
     width: 15rem;
@@ -39,21 +42,41 @@ const Remove = styled.button`
     padding: 0 4px;
 `;
 
-export const ProductCard = ({product: {name, price, id, url}}) => {
+const UpdateBtn = styled.button`
+    position: absolute;
+    left: 0;
+    top: 0;
+`
+
+const RemoveBtn = styled.button`
+    position: absolute;
+    right: 0;
+    top: 0;
+`
+
+export const ProductCard = ({product}) => {
 
     const dispatch = useDispatch();
 
-    const {products} = useSelector(state => state.cart);
+    const {id} = useSelector(state => state.cart);
 
     const handleAddProduct = () => {
+        product.amount = 1
+        dispatch(cartStartAddNewProduct(id, product))
+    };
 
+    const handleActiveProduct = (action) => {
+        dispatch(productsSetActive(product, action));
+        dispatch(toogleAdminPanel());
     };
 
     return (
     <Card>
-        <Img src={url} alt={name}/>
-        <Title>{name}</Title>
-        <Price>${price}</Price>
+        <UpdateBtn onClick={() => handleActiveProduct('update')}>update</UpdateBtn>
+        <RemoveBtn onClick={() => handleActiveProduct('remove')}>remove</RemoveBtn>
+        <Img src={product.url} alt={product.name}/>
+        <Title>{product.name}</Title>
+        <Price>${product.price}</Price>
         <Buttons>
             <Add onClick={handleAddProduct}>+</Add>
             <Remove>-</Remove>

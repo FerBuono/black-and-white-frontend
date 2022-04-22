@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { toogleCartPanel } from '../../actions/ui';
+import { amountInCart } from '../../helpers/amountInCart';
 
 const Container = styled.div`
     position: absolute;
@@ -19,133 +20,74 @@ const CloseBtn = styled.p`
     top: 2rem;
     right: 2rem;
     font-size: 20px;
+    cursor: pointer;
 `;
 
 const Products = styled.div`
     height: 100%;
     padding: 2rem;
-`;
-
-const Title = styled.h3`
-    display: inline-block;
-`;
-
-const FormGroup = styled.div`
-    margin-left: 2rem;
-    display: flex;
-    width: calc(100%-2rem);
-    justify-content: space-between;
-    margin-top: 10px;
-`;
-
-const Input = styled.input`
     width: 100%;
-    border: none;
-    margin-left: 1rem;
-    border-bottom: 1px solid lightgray;
+`;
 
-    &:focus {
-        outline: none;
+const ProductsTable = styled.table`
+    margin-top: 2rem;
+    width: 100%;
+
+    th {
+        text-align: left;
+    }
+
+    tr {
+        height: 50px;
+    }
+
+    img {
+        height: 50px;
     }
 `;
-
-const Submit = styled.input`
-    width: calc(100%-2rem);
-    margin-left: 1rem;
-`;
-
-const Form = styled.form`
-    margin-top: 2rem;
-`;
-
 
 export const CartPanel = () => {
 
     const dispatch = useDispatch();
 
     const {cartPanel} = useSelector(state => state.ui);
+    const {products} = useSelector(state => state.cart);
     
-    useEffect(() => {
-        
-    }, [])
-
     return (
     <Container cartPanel={cartPanel}>
         <CloseBtn onClick={() => dispatch(toogleCartPanel())}>x</CloseBtn>
         <Products>
-            <h2>cart(0)</h2>
-
+            <h2>cart({amountInCart(products)})</h2>
+            <ProductsTable>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        products.map(product => {
+                            return (
+                                <tr>
+                                    <td><img src={product.url} /></td>
+                                    <td>{product.name}</td>
+                                    <td>${product.price}</td>
+                                    <td>{product.amount}</td>
+                                    <td>{product.price * product.amount}</td>
+                                    <td>x</td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
+            </ProductsTable>
         </Products>
-        {/* <Forms>
-            <Form onSubmit={handleSubmitAdd}>
-                <Title>add product</Title>
-                <Submit type="submit" value="add"/>
-                <FormGroup>
-                    <label>name: </label>
-                    <Input type="text" name="name" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>desc: </label>
-                    <Input type="text" name="desc" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>code: </label>
-                    <Input type="text" name="code" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>stock: </label>
-                    <Input type="text" name="stock" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>price: </label>
-                    <Input type="text" name="price" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>img: </label>
-                    <Input type="text" name="url" required/>
-                </FormGroup>
-            </Form>
-            <Form onSubmit={handleSubmitUpdate}>
-                <Title>update product</Title>
-                <Submit type="submit" value="update"/>
-                <FormGroup>
-                    <label>id: </label>
-                    <Input type="text" name="id" required/>
-                </FormGroup>
-                <FormGroup>
-                    <label>name: </label>
-                    <Input type="text" name="name"/>
-                </FormGroup>
-                <FormGroup>
-                    <label>desc: </label>
-                    <Input type="text" name="desc"/>
-                </FormGroup>
-                <FormGroup>
-                    <label>code: </label>
-                    <Input type="text" name="code"/>
-                </FormGroup>
-                <FormGroup>
-                    <label>stock: </label>
-                    <Input type="text" name="stock"/>
-                </FormGroup>
-                <FormGroup>
-                    <label>price: </label>
-                    <Input type="text" name="price"/>
-                </FormGroup>
-                <FormGroup>
-                    <label>img: </label>
-                    <Input type="text" name="url"/>
-                </FormGroup>
-            </Form>
-            <Form onSubmit={handleSubmitDelete}>
-                <Title>delete product</Title>
-                <Submit type="submit" value="delete"/>
-                <FormGroup>
-                    <label>id: </label>
-                    <Input type="text" name="id" required/>
-                </FormGroup>
-            </Form>
-        </Forms> */}
+        
     </Container>
     )
 }

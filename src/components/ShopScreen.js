@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { cartStartCreatNew } from '../actions/cart';
 import { toogleAdminPanel, toogleCartPanel } from '../actions/ui';
+import { amountInCart } from '../helpers/amountInCart';
 import { AdminPanel } from './admin/AdminPanel';
 import { CartPanel } from './cart/CartPanel';
 import { ProductsContainer } from './products/ProductsContainer';
@@ -8,9 +11,13 @@ import { ProductsContainer } from './products/ProductsContainer';
 const Container = styled.div`
     height: 100vh;
     width: 100vw;
-    background-color: white;
-    transition: color 1s ease;
+    margin: 0 auto;
     overflow-y: hidden;
+
+    @media (min-width: 768px) {
+        max-width: 800px;
+        overflow: hidden;
+    }
 `;
 
 const NavBar = styled.div`
@@ -33,11 +40,13 @@ const Counter = styled.p`
     position: absolute;
     right: 2rem;
     user-select: none;
+    cursor: pointer;
 `;
 
 const Admin = styled.p`
     position: absolute;
     left: 2rem;
+    cursor: pointer;
 `;
 
 const Body = styled.div`
@@ -50,14 +59,17 @@ export const ShopScreen = () => {
     const dispatch = useDispatch();
 
     const {adminPanel, cartPanel} = useSelector(state => state.ui);
+    const {products} = useSelector(state => state.cart);
 
-    
+    useEffect(() => {
+        dispatch(cartStartCreatNew());
+    }, [])    
 
     return (
     <Container>
         <NavBar>
             <Logo>black & white</Logo>
-            <Counter cartPanel={cartPanel} onClick={() => dispatch(toogleCartPanel())}>0</Counter>
+            <Counter cartPanel={cartPanel} onClick={() => dispatch(toogleCartPanel())}>{amountInCart(products)}</Counter>
             <Admin adminPanel={adminPanel} onClick={() => dispatch(toogleAdminPanel())}>admin</Admin>
             <AdminPanel />
             <CartPanel />

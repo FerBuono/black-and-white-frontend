@@ -1,16 +1,23 @@
 import { types } from "../types/types";
 
 const initialState = {
-    products: [],
-}
+    id: '',
+    products: []
+};
 
 export const cartReducers = (state = initialState, action) => {
 
     switch (action.type) {
+        case types.cartCreateNew:
+            return {
+                ...state,
+                id: action.payload
+            };
+
         case types.cartAddNewProduct:
             return {
                 ...state,
-                products: [...state.products, action.payload],
+                products: [...action.payload]
             };
 
         default:
