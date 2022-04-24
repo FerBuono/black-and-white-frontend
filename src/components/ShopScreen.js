@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { cartStartCreatNew } from '../actions/cart';
 import { toogleAdminPanel, toogleCartPanel } from '../actions/ui';
-import { amountInCart } from '../helpers/amountInCart';
+import { amountInCart } from '../helpers/cartHelpers';
 import { AdminPanel } from './admin/AdminPanel';
 import { CartPanel } from './cart/CartPanel';
 import { ProductsContainer } from './products/ProductsContainer';

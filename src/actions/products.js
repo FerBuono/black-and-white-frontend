@@ -20,7 +20,10 @@ export const productsStartAddNew = (product) => {
     return async(dispatch) => {
         const resp = await fetchEndPoint('products', product, 'POST');
         const body = await resp.json();
-        dispatch(productsAddNew(body.newProduct));
+
+        !body.newProduct 
+            ? console.log(body.msg)
+            : dispatch(productsUpdate(body.newProductsList));
     };
 };
 
@@ -42,8 +45,10 @@ export const productsStartUpdate = (id, product) => {
     return async(dispatch) => {
         const resp = await fetchEndPoint(`products/${id}`, product, 'PUT');
         const body = await resp.json();
-
-        dispatch(productsUpdate(body.newProductsList));
+        
+        !body.newProductsList 
+            ? console.log(body.msg)
+            : dispatch(productsUpdate(body.newProductsList));
     };
 };
 
@@ -57,7 +62,9 @@ export const productsStartDelete = (id) => {
         const resp = await fetchEndPoint(`products/${id}`, {}, 'DELETE');
         const body = await resp.json();
 
-        dispatch(productsDelete(body.newProductsList));
+        !body.newProductsList 
+            ? console.log(body.msg)
+            : dispatch(productsUpdate(body.newProductsList));
     };
 };
 

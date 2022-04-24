@@ -19,6 +19,18 @@ export const cartReducers = (state = initialState, action) => {
                 ...state,
                 products: [...action.payload]
             };
+        
+        case types.cartRemoveProduct:
+            return {
+                ...state,
+                products: [...action.payload]
+            };
+        
+        case types.cartRemoveAll:
+            return {
+                ...state,
+                products: []
+            };
 
         default:
             return state;

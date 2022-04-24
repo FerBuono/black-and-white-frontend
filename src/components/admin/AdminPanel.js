@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { productsStartAddNew, productsStartDelete, productsStartUpdate, productsUnsetActive } from '../../actions/products';
+import { productsUnsetActive } from '../../actions/products';
 import { toogleAdminPanel } from '../../actions/ui';
+import { handleSubmitAdd, handleSubmitDelete, handleSubmitUpdate } from '../../helpers/productsHelpers';
 
 const Container = styled.div`
     position: absolute;
@@ -79,65 +80,11 @@ export const AdminPanel = () => {
     const [updateValues, setUpdateValues] = useState(update);
     const [removeValues, setRemoveValues] = useState(remove);
 
-    const handleSubmitAdd = (e) => {
-        e.preventDefault();
-
-        const {name, desc, code, stock, price, url} = e.target;
-        const product = {
-            name: name.value,
-            desc: desc.value,
-            code: code.value,
-            stock: stock.value,
-            price: price.value,
-            url: url.value,
-        };
-
-        dispatch(productsStartAddNew(product));
-        dispatch(toogleAdminPanel());
-        e.target.reset();
-    };
-
-    const handleSubmitUpdate = (e) => {
-        e.preventDefault();
-        
-        const {id, name, desc, code, stock, price, url} = e.target;
-        const product = {
-            name: name.value,
-            desc: desc.value,
-            code: code.value,
-            stock: stock.value,
-            price: price.value,
-            url: url.value,
-        };
-
-        const newProduct = {};
-
-        for(const key in product) {
-            if(product[key] !== '') {
-                newProduct[key] = product[key];
-            };
-        };
-
-        dispatch(productsStartUpdate(id.value, newProduct));
-        dispatch(toogleAdminPanel());
-        dispatch(productsUnsetActive());
-        e.target.reset();
-    };
-
-    const handleSubmitDelete = (e) => {
-        e.preventDefault();
-
-        const {id} = e.target;
-
-        dispatch(productsStartDelete(id.value));
-        dispatch(toogleAdminPanel());
-        dispatch(productsUnsetActive());
-        e.target.reset();
-    };
-
     const handleClose = () => {
         dispatch(toogleAdminPanel());
         dispatch(productsUnsetActive());
+        setUpdateValues(initState);
+        setRemoveValues(initState);
     };
 
     useEffect(() => {
@@ -155,7 +102,7 @@ export const AdminPanel = () => {
         <CloseBtn onClick={handleClose}>x</CloseBtn>
         <Forms>
             <h2>admin panel</h2>
-            <Form onSubmit={handleSubmitAdd}>
+            <Form onSubmit={(e) => handleSubmitAdd(e, dispatch)}>
                 <Title>add product</Title>
                 <Submit type="submit" value="add"/>
                 <FormGroup>
@@ -183,12 +130,12 @@ export const AdminPanel = () => {
                     <Input type="text" name="url" required/>
                 </FormGroup>
             </Form>
-            <Form onSubmit={handleSubmitUpdate}>
+            <Form onSubmit={(e) => handleSubmitUpdate(e, dispatch)}>
                 <Title>update product</Title>
                 <Submit type="submit" value="update"/>
                 <FormGroup>
                     <label>id: </label>
-                    <Input type="text" name="id" value={updateValues.id} readOnly/>
+                    <Input type="text" name="id" value={updateValues.id} onChange={setUpdateValues} readOnly />
                 </FormGroup>
                 <FormGroup>
                     <label>name: </label>
@@ -215,12 +162,12 @@ export const AdminPanel = () => {
                     <Input type="text" name="url" value={updateValues.url} onChange={setUpdateValues} />
                 </FormGroup>
             </Form>
-            <Form onSubmit={handleSubmitDelete}>
+            <Form onSubmit={(e) => handleSubmitDelete(e, dispatch)}>
                 <Title>delete product</Title>
                 <Submit type="submit" value="delete"/>
                 <FormGroup>
                     <label>id: </label>
-                    <Input type="text" name="id" required value={removeValues.id} readOnly/>
+                    <Input type="text" name="id" required value={removeValues.id} onChange={setRemoveValues} readOnly />
                 </FormGroup>
             </Form>
         </Forms>

@@ -19,7 +19,7 @@ export const cartStartAddNewProduct = (cartId, product) => {
     return async(dispatch) => {
         const resp = await fetchEndPoint(`cart/${cartId}/products`, product, 'POST');
         const body = await resp.json();
-        console.log(body);
+
         dispatch(cartAddNewProduct(body.cart));
     };
 };
@@ -29,9 +29,29 @@ const cartAddNewProduct = (cart) => ({
     payload: cart
 });
 
-// export const cartStartRemoveProduct = (id) => {
-//     return async(dispatch) => {
-//         const resp = await fetchEndPoint()
-//     };
-// }
+export const cartStartRemoveProduct = (cartId, prodId, prodAmount) => {
+    return async(dispatch) => {
+        const resp = await fetchEndPoint(`cart/${cartId}/products/${prodId}`, {prodAmount}, 'DELETE');
+        const body = await resp.json();
 
+        dispatch(cartRemoveProduct(body.cart));
+    };
+};
+
+const cartRemoveProduct = (cart) => ({
+    type: types.cartRemoveProduct,
+    payload: cart
+});
+
+export const cartStartRemoveAll = (cartId) => {
+    return async(dispatch) => {
+        const resp = await fetchEndPoint(`cart/${cartId}`, {}, 'DELETE');
+        const body = await resp.json();
+
+        dispatch(cartRemoveAll(body.cart));
+    };
+};
+
+const cartRemoveAll = (cart) => ({
+    type: types.cartRemoveAll,
+});

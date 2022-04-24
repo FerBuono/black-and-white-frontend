@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { cartStartRemoveAll, cartStartAddNewProduct, cartStartRemoveProduct } from '../../actions/cart';
 import { toogleCartPanel } from '../../actions/ui';
-import { amountInCart } from '../../helpers/amountInCart';
+import { amountInCart, cartPrice } from '../../helpers/cartHelpers';
 
 const Container = styled.div`
     position: absolute;
@@ -23,6 +23,11 @@ const CloseBtn = styled.p`
     cursor: pointer;
 `;
 
+const Title = styled.h2`
+    display: inline;
+    margin-right: 1rem;
+`;
+
 const Products = styled.div`
     height: 100%;
     padding: 2rem;
@@ -32,9 +37,12 @@ const Products = styled.div`
 const ProductsTable = styled.table`
     margin-top: 2rem;
     width: 100%;
+    table-layout: fixed;
+    text-align: center;
+    border-collapse: collapse;
 
-    th {
-        text-align: left;
+    thead {
+        border-bottom: 1px solid black;
     }
 
     tr {
@@ -44,6 +52,20 @@ const ProductsTable = styled.table`
     img {
         height: 50px;
     }
+
+    tfoot {
+        border-top: 1px solid black;
+    }
+`;
+
+const Buttons = styled.div`
+    display: inline-flex;
+    
+`;
+
+const Button = styled.button`
+    margin: 0 5px;
+    width: 20px;
 `;
 
 export const CartPanel = () => {
@@ -51,21 +73,35 @@ export const CartPanel = () => {
     const dispatch = useDispatch();
 
     const {cartPanel} = useSelector(state => state.ui);
-    const {products} = useSelector(state => state.cart);
+    const {id: cartId, products} = useSelector(state => state.cart);
     
     return (
     <Container cartPanel={cartPanel}>
         <CloseBtn onClick={() => dispatch(toogleCartPanel())}>x</CloseBtn>
         <Products>
-            <h2>cart({amountInCart(products)})</h2>
+            <Title>
+                cart({amountInCart(products)}): ${cartPrice(products)}
+            </Title>
+            {
+                amountInCart(products) > 1 
+                    &&
+                    <button 
+                        onClick={() => {
+                            dispatch(cartStartRemoveAll(cartId));
+                            dispatch(toogleCartPanel());
+                        }}
+                    >
+                        remove all products
+                    </button>
+            }
             <ProductsTable>
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Amount</th>
-                        <th>Total</th>
+                        <th>product</th>
+                        <th>name</th>
+                        <th>price</th>
+                        <th>amount</th>
+                        <th>total</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -73,13 +109,21 @@ export const CartPanel = () => {
                     {
                         products.map(product => {
                             return (
-                                <tr>
+                                <tr key={product.id}>
                                     <td><img src={product.url} /></td>
                                     <td>{product.name}</td>
                                     <td>${product.price}</td>
-                                    <td>{product.amount}</td>
-                                    <td>{product.price * product.amount}</td>
-                                    <td>x</td>
+                                    <td>
+                                        <Buttons>
+                                            <Button onClick={() => dispatch(cartStartAddNewProduct(cartId, product))}>+</Button>
+                                            {product.amount}
+                                            <Button onClick={() => dispatch(cartStartRemoveProduct(cartId, product.id, product.amount))}>-</Button>
+                                        </Buttons>
+                                    </td>
+                                    <td>${product.price * product.amount}</td>
+                                    <td>
+                                        <button onClick={() => dispatch(cartStartRemoveProduct(cartId, product.id, 1))}>remove all</button>
+                                    </td>
                                 </tr>
                             )
                         })
